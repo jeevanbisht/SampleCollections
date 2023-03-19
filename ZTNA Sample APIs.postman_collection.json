@@ -1,13 +1,12 @@
 {
 	"info": {
-		"_postman_id": "09c9818b-2d9a-4521-9623-351a33d6d8c8",
+		"_postman_id": "d6c3bf41-3858-4911-8dc5-9e0f3b2070df",
 		"name": "ZTNA Sample APIs",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "2760044"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "On Behalf of a User",
+			"name": "Sample Calls",
 			"item": [
 				{
 					"name": "Sample 1: Get me info for users",
@@ -93,6 +92,290 @@
 							"path": [
 								"v1.0",
 								"me"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sample 2: Get the Root SPO Site",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
+									"    {\r",
+									"        console.log(\"You need to run *Get App-Only Access Token* request first.\");\r",
+									"    }\r",
+									"    else\r",
+									"    {\r",
+									"        if (pm.environment.get(\"UserId\") === \"\")\r",
+									"        {\r",
+									"            console.log(\"You need to run *Application | Get Users* request first or set a UserId environment variable.\");\r",
+									"        }\r",
+									"        else\r",
+									"        {\r",
+									"            if (pm.response.status === \"Forbidden\")\r",
+									"            {\r",
+									"                console.log(\"You need to add user delegated permissions in your application to atleast *Mail.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *Application | Get App-Only Access Token* request to update access token. \");\r",
+									"            }\r",
+									"            else\r",
+									"            {\r",
+									"                if (responseBody.indexOf(\"ResourceNotFound\") !== -1)\r",
+									"                {\r",
+									"                    console.log(\"You need to pick a UserId who has a license for a mailbox.\");\r",
+									"                }\r",
+									"                else\r",
+									"                {\r",
+									"                    var json = JSON.parse(responseBody);\r",
+									"                    postman.setEnvironmentVariable(\"MessageId\", json.value[0].id);\r",
+									"                }\r",
+									"            }\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"catch (e) {\r",
+									"    console.log(e);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJub25jZSI6Iklpa2FNSmVCVHRwQVFvd1Y3SnBaVVZIUlc4enBJRFhBTUdFNER5N09VOE0iLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lN2JhMTgzNC00N2I0LTRjZGQtODk0ZS02NTk5OTE3ZmQ2MWQvIiwiaWF0IjoxNjc5MTkyNjMyLCJuYmYiOjE2NzkxOTI2MzIsImV4cCI6MTY3OTE5NjU1NiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFUUUF5LzhUQUFBQS9oOEVhZVU3RlMvcmkrYlk0dWRtL1ZqNEJpeGJsckhzYURZUFhhVTY1dmdUNGx2ZlVVTUM3Q1VGZHpCZHRkZFAiLCJhbXIiOlsicHdkIl0sImFwcF9kaXNwbGF5bmFtZSI6IlNhbXBsZUFwcDEiLCJhcHBpZCI6ImZkNDdhZDhmLTM5NWUtNDZjOS1hMWM0LWVkZDY5NDYyMjhiNCIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQmlzaHQiLCJnaXZlbl9uYW1lIjoiSmVldmFuIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiNTAuNDcuODkuMTE5IiwibmFtZSI6IkplZXZhbiBCaXNodCIsIm9pZCI6IjkwZDY3MzJiLWMyZWItNGVmMC04ZjQ3LTliMTIxYjAyMDgxMyIsIm9ucHJlbV9zaWQiOiJTLTEtNS0yMS0xMTIwMjQwMjU1LTIxODQ3NDA5MzYtMzEzNjQ0NjE4MC0xMTA3IiwicGxhdGYiOiIzIiwicHVpZCI6IjEwMDMyMDAxMEE1MjA4MDkiLCJyaCI6IjAuQVhjQU5CaTY1N1JIM1V5SlRtV1prWF9XSFFNQUFBQUFBQUFBd0FBQUFBQUFBQUIzQUJnLiIsInNjcCI6IkRpcmVjdG9yeS5SZWFkLkFsbCBVc2VyLlJlYWQgcHJvZmlsZSBvcGVuaWQgZW1haWwiLCJzdWIiOiJhelZpWk9GbENkbjNRdGl1ekExbzkyREVXWHNhRGZrYXNlc3lwWXdtRDVFIiwidGVuYW50X3JlZ2lvbl9zY29wZSI6Ik5BIiwidGlkIjoiZTdiYTE4MzQtNDdiNC00Y2RkLTg5NGUtNjU5OTkxN2ZkNjFkIiwidW5pcXVlX25hbWUiOiJKZWV2YW5AaWRlbnR0LndvcmsiLCJ1cG4iOiJKZWV2YW5AaWRlbnR0LndvcmsiLCJ1dGkiOiJTVmYwRUtfd0JFdU4xX0lFR1BnRUFBIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiLCJiNzlmYmY0ZC0zZWY5LTQ2ODktODE0My03NmIxOTRlODU1MDkiXSwieG1zX3N0Ijp7InN1YiI6InF1VlowaGtJRVNRbjl3UmtXenNGMHN5VEg0NFMyZDdEaHZBRDI3cEthS0kifSwieG1zX3RjZHQiOjE2MTAxMDI3OTB9.RjK1qcfBdphzcSome4lW0NitR0yiiPKn8IAwIeVyZN2csoG123GD7YWrkde0-s3uYdfJGIoePCveQBs-DzcLu9cBBX7lB3SmUm327OnWtEOgnes3wDBOZEkRwu8jANWSEUfFaJPMqgL52bqfqj5giGiwj2pfEI1MCXvwfg_lU_hIevdwKnt4B-xFKR7L9WZUnJ2mOFKJIr_tkYEnugQQSq1KNWVwKNr_MILjXyCb8AFJTEAO27SooTLjtjrmqfK1LPGZdHyiXNYL-x13ZseTnLrEZD52CoXKsesFkKVQMV9upBkMTIadeaR1CdSH8eKGLRGzQDWIjJS7YC0Y5dWQtw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "SdkVersion",
+								"value": "postman-graph/v1.0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://graph.microsoft.com/v1.0/sites/root",
+							"protocol": "https",
+							"host": [
+								"graph",
+								"microsoft",
+								"com"
+							],
+							"path": [
+								"v1.0",
+								"sites",
+								"root"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sample 3: Get the Lists in the Root SPO Site",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
+									"    {\r",
+									"        console.log(\"You need to run *Get App-Only Access Token* request first.\");\r",
+									"    }\r",
+									"    else\r",
+									"    {\r",
+									"        if (pm.environment.get(\"UserId\") === \"\")\r",
+									"        {\r",
+									"            console.log(\"You need to run *Application | Get Users* request first or set a UserId environment variable.\");\r",
+									"        }\r",
+									"        else\r",
+									"        {\r",
+									"            if (pm.response.status === \"Forbidden\")\r",
+									"            {\r",
+									"                console.log(\"You need to add user delegated permissions in your application to atleast *Mail.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *Application | Get App-Only Access Token* request to update access token. \");\r",
+									"            }\r",
+									"            else\r",
+									"            {\r",
+									"                if (responseBody.indexOf(\"ResourceNotFound\") !== -1)\r",
+									"                {\r",
+									"                    console.log(\"You need to pick a UserId who has a license for a mailbox.\");\r",
+									"                }\r",
+									"                else\r",
+									"                {\r",
+									"                    var json = JSON.parse(responseBody);\r",
+									"                    postman.setEnvironmentVariable(\"MessageId\", json.value[0].id);\r",
+									"                }\r",
+									"            }\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"catch (e) {\r",
+									"    console.log(e);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJub25jZSI6IjhzdDZTSndnRklGaFNiYl9kMzBYNHRLUmZoR1dPdDdaQkpQMEI5aElhQUUiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lN2JhMTgzNC00N2I0LTRjZGQtODk0ZS02NTk5OTE3ZmQ2MWQvIiwiaWF0IjoxNjc5MTk3Mjk5LCJuYmYiOjE2NzkxOTcyOTksImV4cCI6MTY3OTIwMTI1MSwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFUUUF5LzhUQUFBQVo2ck9qS0R2R0phSEk0ajlySkxnOFZ5VFJwSFZyR2dIUlJ1cWxCaEZxL1pEeTFDVFQ1dHlDT3NHaXJmZFRGTkUiLCJhbXIiOlsicHdkIl0sImFwcF9kaXNwbGF5bmFtZSI6IlNhbXBsZUFwcDEiLCJhcHBpZCI6ImZkNDdhZDhmLTM5NWUtNDZjOS1hMWM0LWVkZDY5NDYyMjhiNCIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQmlzaHQiLCJnaXZlbl9uYW1lIjoiSmVldmFuIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiNTAuNDcuODkuMTE5IiwibmFtZSI6IkplZXZhbiBCaXNodCIsIm9pZCI6IjkwZDY3MzJiLWMyZWItNGVmMC04ZjQ3LTliMTIxYjAyMDgxMyIsIm9ucHJlbV9zaWQiOiJTLTEtNS0yMS0xMTIwMjQwMjU1LTIxODQ3NDA5MzYtMzEzNjQ0NjE4MC0xMTA3IiwicGxhdGYiOiIzIiwicHVpZCI6IjEwMDMyMDAxMEE1MjA4MDkiLCJyaCI6IjAuQVhjQU5CaTY1N1JIM1V5SlRtV1prWF9XSFFNQUFBQUFBQUFBd0FBQUFBQUFBQUIzQUJnLiIsInNjcCI6IkRpcmVjdG9yeS5SZWFkLkFsbCBGaWxlcy5SZWFkIEZpbGVzLlJlYWQuQWxsIEZpbGVzLlJlYWRXcml0ZSBGaWxlcy5SZWFkV3JpdGUuQWxsIFNpdGVzLkZ1bGxDb250cm9sLkFsbCBTaXRlcy5SZWFkLkFsbCBTaXRlcy5SZWFkV3JpdGUuQWxsIFVzZXIuUmVhZCBwcm9maWxlIG9wZW5pZCBlbWFpbCIsInN1YiI6ImF6VmlaT0ZsQ2RuM1F0aXV6QTFvOTJERVdYc2FEZmthc2VzeXBZd21ENUUiLCJ0ZW5hbnRfcmVnaW9uX3Njb3BlIjoiTkEiLCJ0aWQiOiJlN2JhMTgzNC00N2I0LTRjZGQtODk0ZS02NTk5OTE3ZmQ2MWQiLCJ1bmlxdWVfbmFtZSI6IkplZXZhbkBpZGVudHQud29yayIsInVwbiI6IkplZXZhbkBpZGVudHQud29yayIsInV0aSI6ImtkUWk4WWZscTBDZDJfeGhYa3hKQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbIjYyZTkwMzk0LTY5ZjUtNDIzNy05MTkwLTAxMjE3NzE0NWUxMCIsImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfc3QiOnsic3ViIjoicXVWWjBoa0lFU1FuOXdSa1d6c0Ywc3lUSDQ0UzJkN0RodkFEMjdwS2FLSSJ9LCJ4bXNfdGNkdCI6MTYxMDEwMjc5MH0.O6CmdNYcvb0fdD57TgEeCTLeIq85yronVjBPG6YfiyYdOUfL_zC42GDXfoOaqYG_YEm_KwHA9NYF69f0uhgThmaiL7rH2MpPODFXFdT_DFpKIwv_iqMLqwT-6V6uG9N9KW3k-FJ-YMxs3dtnEOGNXfsN_HJM4znVyEqAiOozLecGR_-AEw1pEhLcjoHsRGtcUeF__i7lmYmR4TELVtk4-IZCpJjhQbzv2bkwA0aZXyx8bIZ4PtZx_Fg0XNglbgqfkt9-DRNMCDyph8LhfZRYxAdp-rm3H3ZDNtIIZJceMH-NuVYOISj2EwrqEX9NGVuKmpb5Hb6Y320_aHYUpV4AvQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "SdkVersion",
+								"value": "postman-graph/v1.0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://graph.microsoft.com/v1.0/sites/root/lists",
+							"protocol": "https",
+							"host": [
+								"graph",
+								"microsoft",
+								"com"
+							],
+							"path": [
+								"v1.0",
+								"sites",
+								"root",
+								"lists"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "App Permissions",
+			"item": [
+				{
+					"name": "Sample 1: Get the SPO List for Specific SPO Site",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    if (responseBody.indexOf(\"InvalidAuthenticationToken\") !== -1)\r",
+									"    {\r",
+									"        console.log(\"You need to run *Get App-Only Access Token* request first.\");\r",
+									"    }\r",
+									"    else\r",
+									"    {\r",
+									"        if (pm.environment.get(\"UserId\") === \"\")\r",
+									"        {\r",
+									"            console.log(\"You need to run *Application | Get Users* request first or set a UserId environment variable.\");\r",
+									"        }\r",
+									"        else\r",
+									"        {\r",
+									"            if (pm.response.status === \"Forbidden\")\r",
+									"            {\r",
+									"                console.log(\"You need to add user delegated permissions in your application to atleast *Mail.Read.All* in portal.azure.com and then consent as user or Grant admin consent in portal. And re-run *Application | Get App-Only Access Token* request to update access token. \");\r",
+									"            }\r",
+									"            else\r",
+									"            {\r",
+									"                if (responseBody.indexOf(\"ResourceNotFound\") !== -1)\r",
+									"                {\r",
+									"                    console.log(\"You need to pick a UserId who has a license for a mailbox.\");\r",
+									"                }\r",
+									"                else\r",
+									"                {\r",
+									"                    var json = JSON.parse(responseBody);\r",
+									"                    postman.setEnvironmentVariable(\"MessageId\", json.value[0].id);\r",
+									"                }\r",
+									"            }\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"catch (e) {\r",
+									"    console.log(e);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJub25jZSI6Iklpa2FNSmVCVHRwQVFvd1Y3SnBaVVZIUlc4enBJRFhBTUdFNER5N09VOE0iLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lN2JhMTgzNC00N2I0LTRjZGQtODk0ZS02NTk5OTE3ZmQ2MWQvIiwiaWF0IjoxNjc5MTkyNjMyLCJuYmYiOjE2NzkxOTI2MzIsImV4cCI6MTY3OTE5NjU1NiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFUUUF5LzhUQUFBQS9oOEVhZVU3RlMvcmkrYlk0dWRtL1ZqNEJpeGJsckhzYURZUFhhVTY1dmdUNGx2ZlVVTUM3Q1VGZHpCZHRkZFAiLCJhbXIiOlsicHdkIl0sImFwcF9kaXNwbGF5bmFtZSI6IlNhbXBsZUFwcDEiLCJhcHBpZCI6ImZkNDdhZDhmLTM5NWUtNDZjOS1hMWM0LWVkZDY5NDYyMjhiNCIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQmlzaHQiLCJnaXZlbl9uYW1lIjoiSmVldmFuIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiNTAuNDcuODkuMTE5IiwibmFtZSI6IkplZXZhbiBCaXNodCIsIm9pZCI6IjkwZDY3MzJiLWMyZWItNGVmMC04ZjQ3LTliMTIxYjAyMDgxMyIsIm9ucHJlbV9zaWQiOiJTLTEtNS0yMS0xMTIwMjQwMjU1LTIxODQ3NDA5MzYtMzEzNjQ0NjE4MC0xMTA3IiwicGxhdGYiOiIzIiwicHVpZCI6IjEwMDMyMDAxMEE1MjA4MDkiLCJyaCI6IjAuQVhjQU5CaTY1N1JIM1V5SlRtV1prWF9XSFFNQUFBQUFBQUFBd0FBQUFBQUFBQUIzQUJnLiIsInNjcCI6IkRpcmVjdG9yeS5SZWFkLkFsbCBVc2VyLlJlYWQgcHJvZmlsZSBvcGVuaWQgZW1haWwiLCJzdWIiOiJhelZpWk9GbENkbjNRdGl1ekExbzkyREVXWHNhRGZrYXNlc3lwWXdtRDVFIiwidGVuYW50X3JlZ2lvbl9zY29wZSI6Ik5BIiwidGlkIjoiZTdiYTE4MzQtNDdiNC00Y2RkLTg5NGUtNjU5OTkxN2ZkNjFkIiwidW5pcXVlX25hbWUiOiJKZWV2YW5AaWRlbnR0LndvcmsiLCJ1cG4iOiJKZWV2YW5AaWRlbnR0LndvcmsiLCJ1dGkiOiJTVmYwRUtfd0JFdU4xX0lFR1BnRUFBIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiLCJiNzlmYmY0ZC0zZWY5LTQ2ODktODE0My03NmIxOTRlODU1MDkiXSwieG1zX3N0Ijp7InN1YiI6InF1VlowaGtJRVNRbjl3UmtXenNGMHN5VEg0NFMyZDdEaHZBRDI3cEthS0kifSwieG1zX3RjZHQiOjE2MTAxMDI3OTB9.RjK1qcfBdphzcSome4lW0NitR0yiiPKn8IAwIeVyZN2csoG123GD7YWrkde0-s3uYdfJGIoePCveQBs-DzcLu9cBBX7lB3SmUm327OnWtEOgnes3wDBOZEkRwu8jANWSEUfFaJPMqgL52bqfqj5giGiwj2pfEI1MCXvwfg_lU_hIevdwKnt4B-xFKR7L9WZUnJ2mOFKJIr_tkYEnugQQSq1KNWVwKNr_MILjXyCb8AFJTEAO27SooTLjtjrmqfK1LPGZdHyiXNYL-x13ZseTnLrEZD52CoXKsesFkKVQMV9upBkMTIadeaR1CdSH8eKGLRGzQDWIjJS7YC0Y5dWQtw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "SdkVersion",
+								"value": "postman-graph/v1.0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://graph.microsoft.com/v1.0/sites/{ecd3b8ca-d88d-49aa-9585-e1b722d408ee}/lists",
+							"protocol": "https",
+							"host": [
+								"graph",
+								"microsoft",
+								"com"
+							],
+							"path": [
+								"v1.0",
+								"sites",
+								"{ecd3b8ca-d88d-49aa-9585-e1b722d408ee}",
+								"lists"
 							],
 							"query": [
 								{
